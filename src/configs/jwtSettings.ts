@@ -1,3 +1,6 @@
+export const JWT_SECRET = 'some secret'
+export const JWT_ISSUER = 'some issuer'
+
 export enum JWT_SUBJECT {
   ACCESS = 'ACCESS',
   REFRESH = 'REFRESH',
@@ -11,7 +14,7 @@ export interface IJwtClaims {
 
 export function jwtClaims(expiresIn: string, subject: JWT_SUBJECT): IJwtClaims {
   return {
-    issuer: process.env.JWT_ISSUER,
+    issuer: JWT_ISSUER,
     expiresIn,
     subject,
   }

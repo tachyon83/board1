@@ -1,9 +1,9 @@
 import * as jwt from 'jsonwebtoken'
-import { jwtClaims, IJwtClaims } from '../configs/jwtSettings'
+import {jwtClaims, IJwtClaims, JWT_SECRET} from '../configs/jwtSettings'
 import { AppDataSource } from '../data-source'
 import { User } from '../modules/User/User'
 
-export interface IJwtVerificaitonResponse {
+export interface IJwtVerificationResponse {
   jwtVerificationError: string | null
   decodedUserId: number | null
 }
@@ -11,7 +11,7 @@ export interface IJwtVerificaitonResponse {
 export function sign(payload, options: IJwtClaims) {
   const { expiresIn, subject, ...restOptions } = options
 
-  return jwt.sign(payload, process.env.JWT_SECRET, {
+  return jwt.sign(payload, JWT_SECRET, {
     ...jwtClaims(expiresIn, subject),
     ...restOptions,
   })
@@ -20,22 +20,22 @@ export function sign(payload, options: IJwtClaims) {
 export async function verify(
   token,
   options?
-): Promise<IJwtVerificaitonResponse> {
-  const jwtVerificationResponse: IJwtVerificaitonResponse = {
+): Promise<IJwtVerificationResponse> {
+  const jwtVerificationResponse: IJwtVerificationResponse = {
     jwtVerificationError: null,
     decodedUserId: null,
   }
 
-  return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  return jwt.verify(token, JWT_SECRET, (err, decoded) => {
     return new Promise(async (resolve, reject) => {
       if (err) {
         jwtVerificationResponse.jwtVerificationError = err.name
         return reject(jwtVerificationResponse)
       }
 
-      if (decoded.hasOwnProperty('userId')) {
+      if (decoded.hasOwnProperty('username')) {
         const user = await AppDataSource.getRepository(User).findOne({
-          where: { userId: decoded.userId },
+          where: { username: decoded.username },
         })
 
         if (user) {
