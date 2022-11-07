@@ -8,7 +8,6 @@ export default class UserService {
 
     async create(data: IUserInput): Promise<{ ok: number }> {
         const { username, password } = data
-        console.log(10, 'service user create', username, password)
         const existingUser = await this.repo.findOne({ where: { username } })
         if (existingUser) throw new Error()
 

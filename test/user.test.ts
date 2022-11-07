@@ -1,12 +1,15 @@
-import UserController from '../src/controllers/user.controller'
 import { AppDataSource } from '../src/data-source'
-import UserService from '../src/modules/User/service'
 import { setNow } from './testUtil'
-import * as express from 'express'
 import * as supertest from 'supertest'
-import * as app from '../src/app'
+import App from "../src/app";
 
-beforeAll(async () => await AppDataSource.initialize())
+var request
+
+beforeAll(async () => {
+    await AppDataSource.initialize()
+    const createdApp=new App()
+    request=supertest(createdApp.app)
+})
 afterAll(async () => await AppDataSource.destroy())
 
 describe('user', () => {
@@ -108,8 +111,18 @@ describe('user', () => {
         //         // return await done()
         //     })
 
-        const res1 = await supertest(app).post('/user').send({ username: 'abcd', password: '1234' })
+        // const res1 = await supertest(app).post('/user').send({ username: 'abcd', password: '1234' })
+
+        // const createdApp=new App([
+        //     new UserController(new UserService()),
+        // ])
+        // const request=supertest(createdApp.app)
+        const res1 = await request.post('/user')
+            .send({ username: 'abcd', password: '1234' })
+            // .set('Accept', 'application/json')
+            // .expect('Content-Type', /json/)
         // console.log(111, res1)
+        expect(res1.statusCode).toEqual(200)
         // expect(res1)
     })
 })

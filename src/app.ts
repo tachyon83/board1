@@ -2,13 +2,15 @@ import './configs/dotenvConfig'
 import * as express from 'express'
 import { errorHandler } from './middlewares/error.handler'
 import { notFoundHandler } from './middlewares/not.found.handler'
+import UserController from "./controllers/user.controller";
+import UserService from "./modules/User/service";
 
 const Router = express.Router
 
 export default class App {
   app
 
-  constructor(controllers) {
+  constructor(controllers?) {
     this.app = express()
 
     this.initMiddlewares()
@@ -32,12 +34,17 @@ export default class App {
     this.app.use(express.json())
   }
 
-  initControllers(controllers) {
+  initControllers(controllers?) {
     const router = Router()
+
+    if(!controllers || controllers.length===0){
+      controllers=[new UserController(new UserService()),]
+    }
 
     controllers.forEach(controller => {
       router.use(controller.router)
     })
+
     this.app.use('/', router)
   }
 
