@@ -1,6 +1,8 @@
-import {ErrorString} from "../utils/enums"
+import {ContainerKeys, ErrorString} from "../utils/enums"
 import {AppDataSource} from "../data-source"
 import {ErrorLog} from "../modules/ErrorLog/ErrorLog"
+import Container from "typedi";
+import {IServerOptions} from "../common/interfaces/serverOptionInterface";
 
 export class CustomError extends Error {
   path
@@ -12,7 +14,10 @@ export class CustomError extends Error {
 
 export const errorHandler = async (err, req, res, next) => {
   const status = (e=>{
-    // TODO: turn on/off logging upon serverOption
+    const serverOptions:IServerOptions=Container.get(ContainerKeys.ServerOption)
+    if(serverOptions.ERROR_LOGGING){
+      console.log(e)
+    }
     switch (e.message) {
       case ErrorString.BadClientRequest: return 400
       case ErrorString.WrongJWT: return 401

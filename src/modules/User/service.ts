@@ -2,11 +2,13 @@ import {AppDataSource} from '../../data-source'
 import {CommonUtils} from '../../utils/CommonUtils'
 import {IUserInput} from './interface'
 import {User} from './User'
-import {ErrorString} from '../../utils/enums'
+import {ContainerKeys, ErrorString} from '../../utils/enums'
 import {IUserOutput} from './output'
 import * as jwtUtils from '../../utils/jwtUtils'
-import {JWT_SUBJECT} from "../../configs/jwtSettings";
-import {CustomError} from "../../middlewares/error.handler";
+import {JWT_SUBJECT} from "../../configs/jwtSettings"
+import {CustomError} from "../../middlewares/error.handler"
+import Container from 'typedi'
+import {IServerOptions} from "../../common/interfaces/serverOptionInterface"
 
 export default class UserService {
     private repo = AppDataSource.getRepository(User)
@@ -33,9 +35,10 @@ export default class UserService {
         const isPwCorrect = await CommonUtils.comparePassword(password, existingUser.password)
         if (!isPwCorrect) throw new CustomError(ErrorString.BadClientRequest, 'UserService_login_incorrectPw')
 
+        const serverOptions:IServerOptions=Container.get(ContainerKeys.ServerOption)
         return {
             user:existingUser,
-            jwt:jwtUtils.sign({username}, {expiresIn:'5m', subject:JWT_SUBJECT.ACCESS})
+            jwt:jwtUtils.sign({username}, {expiresIn:serverOptions.ACCESS_TOKEN_EXPIRES_IN, subject:JWT_SUBJECT.ACCESS})
         }
     }
 
@@ -44,9 +47,10 @@ export default class UserService {
         const { affected } = await this.repo.update({ userId }, { username: newUserName })
         if (!affected || affected <= 0) throw new CustomError(ErrorString.BadClientRequest, 'UserService_update_noExistingUser')
 
+        const serverOptions:IServerOptions=Container.get(ContainerKeys.ServerOption)
         return {
             user: await this.repo.findOne({ where: { userId } }),
-            jwt: jwtUtils.sign({username: newUserName}, {expiresIn:'5m', subject:JWT_SUBJECT.ACCESS})
+            jwt: jwtUtils.sign({username: newUserName}, {expiresIn:serverOptions.ACCESS_TOKEN_EXPIRES_IN, subject:JWT_SUBJECT.ACCESS})
         }
     }
 

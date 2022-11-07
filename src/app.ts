@@ -4,6 +4,9 @@ import { errorHandler } from './middlewares/error.handler'
 import { notFoundHandler } from './middlewares/not.found.handler'
 import UserController from "./controllers/user.controller";
 import UserService from "./modules/User/service";
+import Container from "typedi";
+import {ContainerKeys} from "./utils/enums";
+import {ServerOptions} from "./configs/config.common";
 
 const Router = express.Router
 
@@ -11,6 +14,8 @@ export default class App {
   app
 
   constructor(controllers?) {
+    Container.set(ContainerKeys.ServerOption, ServerOptions)
+
     this.app = express()
 
     this.initMiddlewares()
