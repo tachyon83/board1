@@ -17,15 +17,14 @@ export default class UserController extends BaseController {
         const router = Router()
 
         router.post('/', requestHandler(this.create))
-        router.post('/login', jwtAuth, requestHandler(this.service.login))
-        router.patch('/', jwtAuth, requestHandler(this.service.update))
-        router.post('/delete', jwtAuth, requestHandler(this.service.delete))
+        router.post('/login', jwtAuth, requestHandler(this.login))
+        router.patch('/', jwtAuth, requestHandler(this.update))
+        router.post('/delete', jwtAuth, requestHandler(this.delete))
 
         this.router.use(this.path, router)
     }
 
     create = async (req: express.Request, res: express.Response) => {
-        console.log(28, 'create user')
         return this.service.create(req.body)
     }
 
