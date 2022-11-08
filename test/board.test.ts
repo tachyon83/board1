@@ -36,5 +36,11 @@ describe('board', () => {
         expect(res3.statusCode).toEqual(200)
         const r3=JSON.parse(res3.text)
         expect(r3.data.text).toEqual('board1')
+
+        // 게시글 확인
+        const res4 = await request.get('/board').query({ boardId: r3.data.boardId})
+        expect(res4.statusCode).toEqual(200)
+        const r4=JSON.parse(res4.text)
+        expect(r4.data.text).toEqual('board1')
     })
 })

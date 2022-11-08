@@ -17,11 +17,16 @@ export default class BoardController extends BaseController {
         const router = Router()
 
         router.post('/',jwtAuth, requestHandler(this.create))
+        router.get('/', requestHandler(this.read))
 
         this.router.use(this.path, router)
     }
 
     create = async (req: express.Request, res: express.Response) => {
         return this.service.create(req.body, req.contextUserId)
+    }
+
+    read = async (req:express.Request, res: express.Response) => {
+        return this.service.read(req.query.boardId)
     }
 }
