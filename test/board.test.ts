@@ -30,6 +30,7 @@ describe('board', () => {
         expect(res2.statusCode).toEqual(200)
         const r2=JSON.parse(res2.text)
         expect(r2.data.user.username).toEqual('tom')
+        const u1Id=r2.data.user.userId
         expect(r2.data.jwt).not.toBeNull()
 
         // 계정2 생성 및 로그인 후 jwt 획득
@@ -96,6 +97,6 @@ describe('board', () => {
         expect(res9.statusCode).toEqual(200)
         const r9=JSON.parse(res9.text)
         expect(r9.data).toHaveLength(3000)
-        expect(r9.data.filter(e=>e.userId == 1)).toHaveLength(3000)
+        expect(r9.data.filter(e=>e.userId == u1Id)).toHaveLength(3000)
     }, 900000)
 })
