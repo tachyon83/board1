@@ -19,7 +19,7 @@ export default class UserController extends BaseController {
         router.post('/', requestHandler(this.create))
         router.post('/login', requestHandler(this.login))
         router.patch('/', jwtAuth, requestHandler(this.update))
-        router.post('/delete', jwtAuth, requestHandler(this.delete))
+        router.delete('/', jwtAuth, requestHandler(this.delete))
 
         this.router.use(this.path, router)
     }

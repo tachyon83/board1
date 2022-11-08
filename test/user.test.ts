@@ -71,19 +71,19 @@ describe('user', () => {
         expect(r8.message).toEqual(ErrorString.DuplicateUserName)
 
         // jwt 없이 계정 삭제 시도 - 실패
-        const res9 = await request.post('/user/delete')
+        const res9 = await request.delete('/user')
         expect(res9.statusCode).toEqual(401)
         const r9=JSON.parse(res9.text)
         expect(r9.message).toEqual(ErrorString.WrongJWT)
 
         // 오염된 jwt 로 계정 삭제 시도 - 실패
-        const res10 = await request.post('/user/delete').set('jwt_access_token', 'wrong')
+        const res10 = await request.delete('/user').set('jwt_access_token', 'wrong')
         expect(res10.statusCode).toEqual(401)
         const r10=JSON.parse(res10.text)
         expect(r10.message).toEqual(ErrorString.WrongJWT)
 
         // 정상 jwt 로 계정 삭제 - 성공
-        const res11 = await request.post('/user/delete').set('jwt_access_token', r7.data.jwt)
+        const res11 = await request.delete('/user').set('jwt_access_token', r7.data.jwt)
         expect(res11.statusCode).toEqual(200)
         const r11=JSON.parse(res11.text)
         expect(r11.data.ok).toEqual(1)
