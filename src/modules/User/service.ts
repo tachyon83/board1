@@ -8,11 +8,12 @@ import {JWT_SUBJECT} from "../../configs/jwtSettings"
 import {CustomError} from "../../middlewares/error.handler"
 import Container from 'typedi'
 import {IServerOptions} from "../../common/interfaces/serverOptionInterface"
+import {IProcessResult} from "../Common/interface";
 
 export default class UserService {
     private repo = AppDataSource.getRepository(User)
 
-    async create(data: IUserInput): Promise<{ ok: number }> {
+    async create(data: IUserInput): Promise<IProcessResult> {
         const { username, password } = data
         const existingUser = await this.repo.findOne({ where: { username } })
         if (existingUser) throw new CustomError(ErrorString.DuplicateUserName, 'UserService_create_existingUser')
@@ -53,7 +54,7 @@ export default class UserService {
         }
     }
 
-    async delete(userId: number): Promise<{ok:number}> {
+    async delete(userId: number): Promise<IProcessResult> {
         const { affected } = await this.repo.delete({ userId })
         if (!affected || affected <= 0) throw new CustomError(ErrorString.BadClientRequest, 'UserService_delete_noExistingUser')
 
