@@ -7,6 +7,8 @@ import UserService from "./modules/User/service";
 import Container from "typedi";
 import {ContainerKeys} from "./utils/enums";
 import {ServerOptions} from "./configs/config.common";
+import BoardController from "./controllers/board.controller";
+import BoardService from "./modules/Board/service";
 
 const Router = express.Router
 
@@ -43,7 +45,10 @@ export default class App {
     const router = Router()
 
     if(!controllers || controllers.length===0){
-      controllers=[new UserController(new UserService()),]
+      controllers=[
+          new UserController(new UserService()),
+          new BoardController(new BoardService()),
+      ]
     }
 
     controllers.forEach(controller => {
