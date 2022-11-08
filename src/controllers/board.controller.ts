@@ -18,6 +18,7 @@ export default class BoardController extends BaseController {
 
         router.post('/',jwtAuth, requestHandler(this.create))
         router.get('/', requestHandler(this.read))
+        router.get('/search', requestHandler(this.search))
 
         this.router.use(this.path, router)
     }
@@ -28,5 +29,9 @@ export default class BoardController extends BaseController {
 
     read = async (req:express.Request, res: express.Response) => {
         return this.service.read(req.query.boardId)
+    }
+
+    search = async (req:express.Request, res: express.Response) => {
+        return this.service.search(req.query.searchText)
     }
 }

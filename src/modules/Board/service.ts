@@ -15,4 +15,11 @@ export default class BoardService {
     async read(boardId: number): Promise<Board> {
         return this.repo.findOne({where:{boardId}})
     }
+
+    async search(text: string): Promise<Board[]> {
+        return this.repo.createQueryBuilder()
+            .select()
+            .where(`MATCH(text) AGAINST ('${text}')`)
+            .getMany()
+    }
 }

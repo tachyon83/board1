@@ -42,5 +42,17 @@ describe('board', () => {
         expect(res4.statusCode).toEqual(200)
         const r4=JSON.parse(res4.text)
         expect(r4.data.text).toEqual('board1')
-    })
+
+        const randomText=['board', 'loren', 'ipsum', 'keyword', 'query', 'search', 'sample', 'example']
+        // 게시글 추가 생성
+        for(let i=0; i<3000;++i){
+            await request.post('/board').set('jwt_access_token',r2.data.jwt).send({ text: randomText[i % randomText.length] })
+        }
+
+        // 게시글 검색 (FULLTEXT 인덱스는 DB 실행계획 통해 확인하였습니다)
+        const res5 = await request.get('/board/search').query({ searchText: 'board'})
+        expect(res5.statusCode).toEqual(200)
+        const r5=JSON.parse(res5.text)
+        expect(r5.data).toHaveLength(375)
+    }, 600000)
 })
