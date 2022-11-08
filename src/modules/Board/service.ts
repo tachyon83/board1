@@ -1,6 +1,9 @@
 import {AppDataSource} from '../../data-source'
 import {IBoardInput} from './interface'
 import {Board} from "./Board";
+import {IProcessResult} from "../Common/interface";
+import {ErrorString} from "../../utils/enums";
+import {CustomError} from "../../middlewares/error.handler";
 
 export default class BoardService {
     private repo = AppDataSource.getRepository(Board)
@@ -21,5 +24,15 @@ export default class BoardService {
             .select()
             .where(`MATCH(text) AGAINST ('${text}')`)
             .getMany()
+    }
+
+    async delete(boardId:number, userId:number): Promise<IProcessResult> {
+        const existingBoard = await this.repo.findOne({where: {boardId}})
+        if(!existingBoard) throw new CustomError(ErrorString.BadClientRequest, 'BoardService_delete_noExistingBoard')
+
+        if(existingBoard.userId !== userId) throw new CustomError(ErrorString.UnAuthorized, 'BoardService_delete_unauthorized')
+
+        const { affected } = await this.repo.delete({boardId})
+        return { ok: (affected && affected>0)? 1:0}
     }
 }

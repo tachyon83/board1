@@ -21,6 +21,7 @@ export const errorHandler = async (err, req, res, next) => {
     switch (e.message) {
       case ErrorString.BadClientRequest: return 400
       case ErrorString.WrongJWT: return 401
+      case ErrorString.UnAuthorized: return 401
       case ErrorString.DuplicateUserName: return 409
       default: return 500
     }

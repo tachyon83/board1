@@ -2,6 +2,7 @@ import { AppDataSource } from '../src/data-source'
 import { setNow } from './testUtil'
 import * as supertest from 'supertest'
 import App from "../src/app"
+import {ErrorString} from "../src/utils/enums";
 
 var request
 
@@ -31,6 +32,11 @@ describe('board', () => {
         expect(r2.data.user.username).toEqual('tom')
         expect(r2.data.jwt).not.toBeNull()
 
+        // 계정2 생성 및 로그인 후 jwt 획득
+        await request.post('/user').send({ username: 'paul', password: 'abcd' })
+        const res21=await request.post('/user/login').send({ username: 'paul', password: 'abcd' })
+        const r21=JSON.parse(res21.text)
+
         // 게시글 작성
         const res3 = await request.post('/board').set('jwt_access_token',r2.data.jwt).send({ text: 'board1' })
         expect(res3.statusCode).toEqual(200)
@@ -54,5 +60,35 @@ describe('board', () => {
         expect(res5.statusCode).toEqual(200)
         const r5=JSON.parse(res5.text)
         expect(r5.data).toHaveLength(375)
-    }, 600000)
+
+        // jwt 없이 게시글 삭제 시도 - 실패
+        const res6 = await request.delete('/board').query({boardId: 1})
+        expect(res6.statusCode).toEqual(401)
+        const r6=JSON.parse(res6.text)
+        expect(r6.message).toEqual(ErrorString.WrongJWT)
+
+        // 오염된 jwt 로 게시글 삭제 시도 - 실패
+        const res7 = await request.delete('/board').set('jwt_access_token','wrong jwt').query({boardId: 1})
+        expect(res7.statusCode).toEqual(401)
+        const r7=JSON.parse(res7.text)
+        expect(r7.message).toEqual(ErrorString.WrongJWT)
+
+        // 다른 유저가 게시글 삭제 시도 - 실패
+        const res71 = await request.delete('/board').set('jwt_access_token',r21.data.jwt).query({boardId: 1})
+        expect(res71.statusCode).toEqual(401)
+        const r71=JSON.parse(res71.text)
+        expect(r71.message).toEqual(ErrorString.UnAuthorized)
+
+        // 없는 게시글 삭제 시도 - 실패
+        const res72 = await request.delete('/board').set('jwt_access_token',r21.data.jwt).query({boardId: 8000})
+        expect(res72.statusCode).toEqual(400)
+        const r72=JSON.parse(res72.text)
+        expect(r72.message).toEqual(ErrorString.BadClientRequest)
+
+        // 게시글 삭제 - 성공
+        const res8 = await request.delete('/board').set('jwt_access_token',r2.data.jwt).query({boardId: 1})
+        expect(res8.statusCode).toEqual(200)
+        const r8=JSON.parse(res8.text)
+        expect(r8.data.ok).toEqual(1)
+    }, 800000)
 })

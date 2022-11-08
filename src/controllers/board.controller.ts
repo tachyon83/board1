@@ -19,6 +19,7 @@ export default class BoardController extends BaseController {
         router.post('/',jwtAuth, requestHandler(this.create))
         router.get('/', requestHandler(this.read))
         router.get('/search', requestHandler(this.search))
+        router.delete('/', jwtAuth, requestHandler(this.delete))
 
         this.router.use(this.path, router)
     }
@@ -33,5 +34,9 @@ export default class BoardController extends BaseController {
 
     search = async (req:express.Request, res: express.Response) => {
         return this.service.search(req.query.searchText)
+    }
+
+    delete = async (req:express.Request, res: express.Response) => {
+        return this.service.delete(req.query.boardId, req.contextUserId)
     }
 }
