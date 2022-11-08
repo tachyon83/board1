@@ -8,7 +8,7 @@ export const jwtAuth = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const accessToken = req.headers.jwt_access_token_key
+  const accessToken = req.headers.jwt_access_token
   // const refreshToken = req.headers[process.env.JWT_REFRESH_TOKEN_KEY]
 
   if (!accessToken) {

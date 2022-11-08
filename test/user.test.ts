@@ -51,13 +51,13 @@ describe('user', () => {
         expect(r5.message).toEqual(ErrorString.WrongJWT)
 
         // 오염된 jwt 로 계정 업데이트 시도 - 실패
-        const res6 = await request.patch('/user').set('jwt_access_token_key', 'wrong').send({ username: 'tom2'})
+        const res6 = await request.patch('/user').set('jwt_access_token', 'wrong').send({ username: 'tom2'})
         expect(res6.statusCode).toEqual(401)
         const r6=JSON.parse(res6.text)
         expect(r6.message).toEqual(ErrorString.WrongJWT)
 
         // 정상 jwt 로 계정 업데이트 - 성공
-        const res7 = await request.patch('/user').set('jwt_access_token_key', r4.data.jwt).send({ username: 'tom2'})
+        const res7 = await request.patch('/user').set('jwt_access_token', r4.data.jwt).send({ username: 'tom2'})
         expect(res7.statusCode).toEqual(200)
         const r7=JSON.parse(res7.text)
         expect(r7.data.user.username).toEqual('tom2')
@@ -77,13 +77,13 @@ describe('user', () => {
         expect(r9.message).toEqual(ErrorString.WrongJWT)
 
         // 오염된 jwt 로 계정 삭제 시도 - 실패
-        const res10 = await request.post('/user/delete').set('jwt_access_token_key', 'wrong')
+        const res10 = await request.post('/user/delete').set('jwt_access_token', 'wrong')
         expect(res10.statusCode).toEqual(401)
         const r10=JSON.parse(res10.text)
         expect(r10.message).toEqual(ErrorString.WrongJWT)
 
         // 정상 jwt 로 계정 삭제 - 성공
-        const res11 = await request.post('/user/delete').set('jwt_access_token_key', r7.data.jwt)
+        const res11 = await request.post('/user/delete').set('jwt_access_token', r7.data.jwt)
         expect(res11.statusCode).toEqual(200)
         const r11=JSON.parse(res11.text)
         expect(r11.data.ok).toEqual(1)
