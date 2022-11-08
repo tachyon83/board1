@@ -1,9 +1,8 @@
 import {AppDataSource} from '../../data-source'
 import {CommonUtils} from '../../utils/CommonUtils'
-import {IUserInput} from './interface'
+import {IUserInput, IUserOutput} from './interface'
 import {User} from './User'
 import {ContainerKeys, ErrorString} from '../../utils/enums'
-import {IUserOutput} from './output'
 import * as jwtUtils from '../../utils/jwtUtils'
 import {JWT_SUBJECT} from "../../configs/jwtSettings"
 import {CustomError} from "../../middlewares/error.handler"
