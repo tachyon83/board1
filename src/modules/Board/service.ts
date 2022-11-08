@@ -35,4 +35,8 @@ export default class BoardService {
         const { affected } = await this.repo.delete({boardId})
         return { ok: (affected && affected>0)? 1:0}
     }
+
+    async getMyPosts(userId: number): Promise<Board[]> {
+        return this.repo.find({where:{userId}})
+    }
 }

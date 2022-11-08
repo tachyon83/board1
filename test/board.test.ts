@@ -90,5 +90,12 @@ describe('board', () => {
         expect(res8.statusCode).toEqual(200)
         const r8=JSON.parse(res8.text)
         expect(r8.data.ok).toEqual(1)
-    }, 800000)
+
+        // 나의 게시글 조회
+        const res9 = await request.get('/board/my').set('jwt_access_token',r2.data.jwt)
+        expect(res9.statusCode).toEqual(200)
+        const r9=JSON.parse(res9.text)
+        expect(r9.data).toHaveLength(3000)
+        expect(r9.data.filter(e=>e.userId == 1)).toHaveLength(3000)
+    }, 900000)
 })

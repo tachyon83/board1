@@ -20,6 +20,7 @@ export default class BoardController extends BaseController {
         router.get('/', requestHandler(this.read))
         router.get('/search', requestHandler(this.search))
         router.delete('/', jwtAuth, requestHandler(this.delete))
+        router.get('/my', jwtAuth, requestHandler(this.getMyPosts))
 
         this.router.use(this.path, router)
     }
@@ -38,5 +39,9 @@ export default class BoardController extends BaseController {
 
     delete = async (req:express.Request, res: express.Response) => {
         return this.service.delete(req.query.boardId, req.contextUserId)
+    }
+
+    getMyPosts = async (req:express.Request, res: express.Response) => {
+        return this.service.getMyPosts(req.contextUserId)
     }
 }
