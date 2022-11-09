@@ -9,6 +9,8 @@ import {ContainerKeys} from "./utils/enums";
 import {ServerOptions} from "./configs/config.common";
 import BoardController from "./controllers/board.controller";
 import BoardService from "./modules/Board/service";
+import CommentController from "./controllers/comment.controller";
+import CommentService from "./modules/Comment/service";
 
 const Router = express.Router
 
@@ -48,6 +50,7 @@ export default class App {
       controllers=[
           new UserController(new UserService()),
           new BoardController(new BoardService()),
+          new CommentController(new CommentService()),
       ]
     }
 
