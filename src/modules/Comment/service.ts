@@ -4,6 +4,8 @@ import {ErrorString} from "../../utils/enums";
 import {CustomError} from "../../middlewares/error.handler";
 import {Comment} from "./Comment";
 import {ICommentInput} from "./interface";
+import {CommonUtils} from "../../utils/CommonUtils";
+import {IsNull} from "typeorm";
 
 export default class CommentService {
     private repo = AppDataSource.getRepository(Comment)
@@ -16,7 +18,7 @@ export default class CommentService {
     }
 
     async read(boardId: number): Promise<Comment[]> {
-        return this.repo.find({where:{boardId}})
+        return this.repo.find({where:{boardId, deletedAt:IsNull()}})
     }
 
     async update(data: ICommentInput, userId:number): Promise<Comment> {
@@ -34,7 +36,7 @@ export default class CommentService {
         if(!existingComment) throw new CustomError(ErrorString.BadClientRequest, 'CommentService_delete_noExistingComment')
         if(existingComment.userId !== userId) throw new CustomError(ErrorString.UnAuthorized, 'CommentService_delete_unauthorized')
 
-        const { affected } = await this.repo.delete({commentId})
+        const { affected } = await this.repo.update({commentId}, {deletedAt:CommonUtils.getNowDate()})
         return { ok: (affected && affected>0)? 1:0}
     }
 }
