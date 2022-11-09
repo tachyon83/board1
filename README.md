@@ -14,18 +14,25 @@
      - 내가 쓴 글 확인
      - 게시판 댓글 및 대댓글
 
+---
+
 - 에러 처리
   - statusCode, e.message 통해 확인할 수 있도록 구현
   - src > utils > enums > ErrorString
   - src > configs > config.common.ts > ServerOptions > ERROR_LOGGING 통해 로그 토글 가능
   
+---
+
 - 로그
   - error_log 테이블에 발생 경로 등 저장
 
-`npm start` 통해 서버 시작 (포트:4000)
-`npm test` 통해 기능 테스트
+---
+
+- `npm start` 통해 서버 시작 (포트:4000)
+- `npm test` 통해 기능 테스트
 - mysql port 는 3306 입니다. 
   - src > configs > port 에서 포트 변경 가능
+---
   
 - jwt 를 이용해 사용자 인증을 합니다.
   - 리프레시 토큰은 추가하지 않았습니다.
