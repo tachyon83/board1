@@ -1,5 +1,13 @@
 # 유저, 게시판, 댓글 구현
 
+- 사용 기술
+  - typescript
+  - node
+  - express (rest api)
+  - typeorm
+  - mysql
+---
+
 - 기능 구현
   - 유저
      - 회원가입
