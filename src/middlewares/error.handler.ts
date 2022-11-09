@@ -16,7 +16,7 @@ export const errorHandler = async (err, req, res, next) => {
   const status = (e=>{
     const serverOptions:IServerOptions=Container.get(ContainerKeys.ServerOption)
     if(serverOptions.ERROR_LOGGING){
-      console.log(e)
+      console.log(e.message)
     }
     switch (e.message) {
       case ErrorString.BadClientRequest: return 400
