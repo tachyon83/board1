@@ -99,6 +99,5 @@ describe('comment', () => {
         const res10=await request.get('/comment').query({boardId: b2})
         const l10=JSON.parse(res10.text)
         expect(l10.data).toHaveLength(1)
-
-    }, 900000)
+    })
 })
