@@ -41,11 +41,67 @@ describe('comment', () => {
         const r3=JSON.parse(res3.text)
         const b2=r3.data.boardId
 
-        // 게시글1에 코멘트1 생성
-        await request.post('/comment').set('jwt_access_token',r1.data.jwt).send({
-            boardId: b1,
-            text:'comment on b1 by u1',
-        })
+        // 게시글1에 붙은 코멘트 순서대로 확인하기
+        // [commentId, parentId, depth]
+        // 화면에서 보여질 댓글 순서대로 서버에서 정렬하였습니다.
+        // 1,0,0
+        //      3,1,1
+        //          6,3,2
+        // 2,0,0
+        //      7,2,1
+        //      8,2,1
+        //          11,8,2
+        //      9,2,1
+        //          10,9,2
+        // 4,0,0
+        //      12,4,1
+        //          13,12,2
+        //          15,12,2
+        //      14,4,1
+        //          16,14,2
+        //              17,16,3
+        //                  18,17,4
+        // 5,0,0
+        //      19,5,1
+
+        const createComment = async (token, boardId, text, parentId, depth)=>{
+            await request.post('/comment').set('jwt_access_token',token).send({
+                boardId, text, parentId, depth,
+            })
+        }
+
+        // 게시글1에 코멘트들 생성
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 0, 0)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 0, 0)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 1, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 0, 0)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 0, 0)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 3, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 2, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 2, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 2, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 9, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 8, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 4, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 12, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 4, 1)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 12, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 14, 2)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 16, 3)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 17, 4)
+        await createComment(r1.data.jwt, b1, 'comment on b1 by u1', 5, 1)
+
+        const res4=await request.get('/comment').query({boardId:b1})
+        expect(res4.statusCode).toEqual(200)
+        const l4=JSON.parse(res4.text)
+        expect(l4.data).toHaveLength(19)
+        expect(l4.data[3].commentId).toEqual(2)
+        expect(l4.data[6].commentId).toEqual(11)
+        expect(l4.data[8].commentId).toEqual(10)
+        expect(l4.data[13].commentId).toEqual(14)
+        expect(l4.data[15].commentId).toEqual(17)
+        expect(l4.data[17].commentId).toEqual(5)
+        expect(l4.data[18].commentId).toEqual(19)
 
         // 게시글2에 코멘트 2개 생성
         const res41 = await request.post('/comment').set('jwt_access_token',r1.data.jwt).send({

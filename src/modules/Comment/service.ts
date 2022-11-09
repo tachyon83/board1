@@ -17,8 +17,35 @@ export default class CommentService {
         return this.repo.findOne({where:{commentId:inst.commentId}})
     }
 
+    // 화면에서 보여질 댓글 순서대로 서버에서 정렬하였습니다.
     async read(boardId: number): Promise<Comment[]> {
-        return this.repo.find({where:{boardId, deletedAt:IsNull()}})
+        const comments:Comment[]=await this.repo.find({
+            where:{boardId, deletedAt:IsNull()},
+            order:{depth:"ASC", commentId:"ASC"}
+        })
+
+        const commentTree:{[key:number]:number[]}={0:[]}
+        for(let i=0;i<comments.length;++i){
+            const comment=comments[i]
+            if(!comment.parentId){
+                commentTree[0].push(i)
+                continue
+            }
+            if(!(comment.parentId in commentTree))commentTree[comment.parentId]=[]
+            commentTree[comment.parentId].push(i)
+        }
+
+        const ret:Comment[]=[]
+        const commentArrayMaker=(node:number)=>{
+            if(!(node in commentTree))return
+            for(const idx of commentTree[node]){
+                const commentToPush=comments[idx]
+                ret.push(commentToPush)
+                commentArrayMaker(commentToPush.commentId)
+            }
+        }
+        commentArrayMaker(0)
+        return ret
     }
 
     async update(data: ICommentInput, userId:number): Promise<Comment> {
