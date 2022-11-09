@@ -4,6 +4,13 @@ import { errorHandler } from './middlewares/error.handler'
 import { notFoundHandler } from './middlewares/not.found.handler'
 import UserController from "./controllers/user.controller";
 import UserService from "./modules/User/service";
+import Container from "typedi";
+import {ContainerKeys} from "./utils/enums";
+import {ServerOptions} from "./configs/config.common";
+import BoardController from "./controllers/board.controller";
+import BoardService from "./modules/Board/service";
+import CommentController from "./controllers/comment.controller";
+import CommentService from "./modules/Comment/service";
 
 const Router = express.Router
 
@@ -11,6 +18,8 @@ export default class App {
   app
 
   constructor(controllers?) {
+    Container.set(ContainerKeys.ServerOption, ServerOptions)
+
     this.app = express()
 
     this.initMiddlewares()
@@ -38,7 +47,11 @@ export default class App {
     const router = Router()
 
     if(!controllers || controllers.length===0){
-      controllers=[new UserController(new UserService()),]
+      controllers=[
+          new UserController(new UserService()),
+          new BoardController(new BoardService()),
+          new CommentController(new CommentService()),
+      ]
     }
 
     controllers.forEach(controller => {

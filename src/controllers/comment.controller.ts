@@ -5,8 +5,8 @@ import requestHandler from './request.handler'
 import { jwtAuth } from '../utils/jwtAuthMiddleware'
 import BaseController from './base.controller'
 
-export default class UserController extends BaseController {
-    path = '/user'
+export default class CommentController extends BaseController {
+    path = '/comment'
 
     constructor(service) {
         super(service)
@@ -16,8 +16,8 @@ export default class UserController extends BaseController {
     init() {
         const router = Router()
 
-        router.post('/', requestHandler(this.create))
-        router.post('/login', requestHandler(this.login))
+        router.post('/',jwtAuth, requestHandler(this.create))
+        router.get('/', requestHandler(this.get))
         router.patch('/', jwtAuth, requestHandler(this.update))
         router.delete('/', jwtAuth, requestHandler(this.delete))
 
@@ -25,18 +25,18 @@ export default class UserController extends BaseController {
     }
 
     create = async (req: express.Request, res: express.Response) => {
-        return this.service.create(req.body)
+        return this.service.create(req.body, req.contextUserId)
     }
 
-    login = async (req: express.Request, res: express.Response) => {
-        return this.service.login(req.body)
+    get = async (req:express.Request, res: express.Response) => {
+        return this.service.read(req.query.boardId)
     }
 
-    update = async (req: express.Request, res: express.Response) => {
+    update = async (req:express.Request, res: express.Response) => {
         return this.service.update(req.body, req.contextUserId)
     }
 
-    delete = async (req: express.Request, res: express.Response) => {
-        return this.service.delete(req.contextUserId)
+    delete = async (req:express.Request, res: express.Response) => {
+        return this.service.delete(req.query.commentId, req.contextUserId)
     }
 }

@@ -1,4 +1,7 @@
 import { User } from "../modules/User/User";
+import {ErrorLog} from "../modules/ErrorLog/ErrorLog";
+import {Board} from "../modules/Board/Board";
+import {Comment} from "../modules/Comment/Comment";
 
 module.exports = {
   type: 'mysql',
@@ -9,7 +12,7 @@ module.exports = {
   database: process.env.DB_DATABASE || 'test',
   synchronize: true,
   logging: false,
-  entities: [User],
+  entities: [ User, ErrorLog, Board, Comment ],
   migrations: [],
   subscribers: [],
   legacySpatialSupport: false,
